@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function SubscribePage() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,16 @@ export default function SubscribePage() {
     console.log(email);
     console.log(username);
     console.log(password);
+
+    axios
+      .post("http://127.0.0.1:8080/subscribe", {
+        mail: email,
+        username: username,
+        password: password,
+      })
+      .then((responce) => {
+        console.log(responce);
+      });
   };
 
   return (
