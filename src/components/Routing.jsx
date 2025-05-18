@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Routes, Route } from "react-router-dom";
 
@@ -6,19 +6,25 @@ import LoginPage from "../pages/LoginPage";
 import SubscribePage from "../pages/SubscribePage";
 import UserPage from "../pages/UsersPage";
 
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../contextes/AuthProvider";
+// import { Navigate } from "react-router-dom";
+// import { useAuth } from "../contextes/AuthProvider";
 
 export default function Routing() {
-  const ProtectedRoute = ({ children }) => {
-    const { user, loading } = useAuth();
+  // const { user, loading, fetchUser } = useAuth();
 
-    if (loading) return <div>Loading...</div>;
+  // useEffect(() => {
+  //   fetchUser(); // ← on déclenche ici
+  // }, []);
 
-    if (!user) return <Navigate to="/login" replace />;
+  // const ProtectedRoute = ({ children }) => {
+  //   if (loading) return <div>Loading...</div>;
 
-    return children;
-  };
+  //   if (!user) {
+  //     return <Navigate to="/login" replace />;
+  //   }
+
+  //   return children;
+  // };
 
   return (
     <>
@@ -27,9 +33,8 @@ export default function Routing() {
         <Route
           path="/users"
           element={
-            <ProtectedRoute>
               <UserPage />
-            </ProtectedRoute>
+           
           }
         ></Route>
         <Route path="/login" element={<LoginPage />}></Route>

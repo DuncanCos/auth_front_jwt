@@ -7,12 +7,14 @@ import { AuthProvider } from "./contextes/AuthProvider";
 function App() {
   return (
     <>
-      <AuthProvider>
+      
         <BrowserRouter>
+        <AuthProvider>
           <NavBar />
           <Routing />
+          </AuthProvider>
         </BrowserRouter>
-      </AuthProvider>
+      
     </>
   );
 }

@@ -11,10 +11,11 @@ export default function LoginPage() {
     console.log(password);
 
     axios
-      .post("http://127.0.0.1:8080/login", {
+      .post("http://127.0.0.1:8080/login" , {
         mail: email,
         password: password,
-      })
+       
+      },{ withCredentials: true})
       .then((responce) => {
         console.log(responce);
       });

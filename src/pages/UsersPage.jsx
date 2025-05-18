@@ -1,9 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../contextes/AuthProvider";
 
 export default function UserPage() {
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState({ username: "", email: "" });
   const [editingIndex, setEditingIndex] = useState(null);
+
+  const { user, loading, fetchUser } = useAuth();
+
+  useEffect(()=>{
+    const loadUser = async () => {
+      await fetchUser();
+      console.log("Utilisateur après chargement :", user);
+      };
+      
+      loadUser();
+
+      
+  },[])
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,6 +53,10 @@ export default function UserPage() {
       setEditingIndex(null);
     }
   };
+
+  if (!user) {
+    return <div>ya rien...</div>;
+  }
 
   return (
     <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
