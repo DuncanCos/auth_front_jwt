@@ -1,107 +1,151 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contextes/AuthProvider";
+import axios from "axios";
+import MustBeLoggedIn from "./MustBeLoggedIn";
+import UserModalSession from "../components/UserModalSession";
+import UserModalModif from "../components/UserModalModif";
+import UserModalDelete from "../components/UserModalDelete";
 
 export default function UserPage() {
   const [users, setUsers] = useState([]);
-  const [form, setForm] = useState({ username: "", email: "" });
-  const [editingIndex, setEditingIndex] = useState(null);
+
+  const [showSessionModal, setShowSessionModal] = useState(false);
+  const [showModifModal, setShowModifModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { user, loading, fetchUser } = useAuth();
 
-  useEffect(()=>{
-    const loadUser = async () => {
-      await fetchUser();
+  const [selectedId, setSelectedId] = useState(0);
+  const [selectedUser, setSelectedUser] = useState({
+    id: 0,
+    mail: "mail",
+    password: "pass",
+    username: "username",
+    created_at: "2025-04-16T13:03:12.379612",
+  });
+
+  useEffect(() => {
+    const loadUser = () => {
+      fetchUser();
+      getingUsers();
       console.log("Utilisateur après chargement :", user);
-      };
-      
-      loadUser();
+    };
 
-      
-  },[])
+    loadUser();
+  }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.username || !form.email) return;
-
-    if (editingIndex !== null) {
-      const updated = [...users];
-      updated[editingIndex] = form;
-      setUsers(updated);
-      setEditingIndex(null);
-    } else {
-      setUsers([...users, form]);
-    }
-
-    setForm({ username: "", email: "" });
-  };
-
-  const handleEdit = (index) => {
-    setForm(users[index]);
-    setEditingIndex(index);
-  };
-
-  const handleDelete = (index) => {
-    const updated = users.filter((_, i) => i !== index);
-    setUsers(updated);
-    if (editingIndex === index) {
-      setForm({ username: "", email: "" });
-      setEditingIndex(null);
-    }
+  const getingUsers = () => {
+    axios
+      .get("http://127.0.0.1:8080/users/users", { withCredentials: true })
+      .then((resp) => {
+        console.log(resp.data);
+        setUsers(resp.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+        if (err.response.data == "relog needed") {
+          axios
+            .get("http://127.0.0.1:8080/refresh", { withCredentials: true })
+            .then((resp) => {
+              console.log(resp);
+              if (resp.data == "token refreshed") {
+                axios
+                  .get("http://127.0.0.1:8080/users/users", {
+                    withCredentials: true,
+                  })
+                  .then((responce) => {
+                    console.log(responce);
+                    setUsers(responce.data);
+                  })
+                  .catch((error) => {
+                    console.log("eeror");
+                    console.log(error);
+                  });
+              }
+            });
+        }
+      });
   };
 
   if (!user) {
-    return <div>ya rien...</div>;
+    return <MustBeLoggedIn />;
   }
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
-      <h2>Gestion des Utilisateurs</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: "1rem" }}>
-        <input
-          type="text"
-          name="username"
-          placeholder="Nom d'utilisateur"
-          value={form.username}
-          onChange={handleChange}
-          style={{ marginRight: "0.5rem" }}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          style={{ marginRight: "0.5rem" }}
-        />
-        <button type="submit">
-          {editingIndex !== null ? "Modifier" : "Ajouter"}
-        </button>
-      </form>
-
-      <ul>
-        {users.map((user, index) => (
-          <li key={index} style={{ marginBottom: "0.5rem" }}>
-            <strong>{user.username}</strong> – {user.email}
-            <button
-              onClick={() => handleEdit(index)}
-              style={{ marginLeft: "1rem" }}
-            >
-              Éditer
-            </button>
-            <button
-              onClick={() => handleDelete(index)}
-              style={{ marginLeft: "0.5rem" }}
-            >
-              Supprimer
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div className="overflow-x-auto">
+      <table className="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom d'utilisateur</th>
+            <th>Email</th>
+            <th>Date de création</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td>{user.id}</td>
+              <td>{user.username}</td>
+              <td>{user.mail}</td>
+              <td>
+                {new Date(user.created_at).toLocaleString("fr-FR", {
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </td>
+              <td className="space-x-2">
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={() => {
+                    setShowModifModal(true);
+                    setSelectedUser(user);
+                  }}
+                >
+                  Modifier
+                </button>
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={() => {
+                    setSelectedId(user.id);
+                    setShowSessionModal(true);
+                  }}
+                >
+                  Sessions
+                </button>
+                <button
+                  className="btn btn-sm btn-error"
+                  onClick={() => {
+                    setShowDeleteModal(true);
+                    setSelectedId(user.id);
+                  }}
+                >
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <UserModalSession
+        show={showSessionModal}
+        onClose={() => setShowSessionModal(false)}
+        userId={selectedId}
+      />
+      <UserModalModif
+        show={showModifModal}
+        onClose={() => setShowModifModal(false)}
+        user={selectedUser}
+      />
+      <UserModalDelete
+        show={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        userId={selectedId}
+      />
     </div>
   );
 }

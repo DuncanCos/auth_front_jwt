@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AlertMessage from "../components/AlertMessage";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,60 +12,97 @@ export default function LoginPage() {
     console.log(password);
 
     axios
-      .post("http://127.0.0.1:8080/login" , {
-        mail: email,
-        password: password,
-       
-      },{ withCredentials: true})
+      .post(
+        "http://127.0.0.1:8080/login",
+        {
+          mail: email,
+          password: password,
+        },
+        { withCredentials: true },
+      )
       .then((responce) => {
         console.log(responce);
+        showAlert("success");
+      })
+      .catch((err) => {
+        console.log(err);
+        showAlert("error");
       });
   };
 
+  const [alert, setAlert] = useState(null);
+
+  const showAlert = (type) => {
+    const message =
+      type === "success"
+        ? "Succès ! Tout s'est bien passé."
+        : "Échec ! Une erreur est survenue.";
+    setAlert({ type, message });
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Connexion
-        </h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
+    <div className="min-h-screen flex items-center justify-center bg-base-200">
+      <div className="card w-full max-w-sm shadow-xl bg-base-100">
+        <form
+          className="card-body"
+          onSubmit={(e) => {
+            e.preventDefault();
+            Login();
+          }}
+        >
+          <h2 className="text-2xl font-bold text-center mb-2">Connexion</h2>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Email</span>
             </label>
             <input
               type="email"
-              className="mt-1 w-full p-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="exemple@email.com"
+              className="input input-bordered"
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Mot de passe
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Mot de passe</span>
             </label>
             <input
               type="password"
-              className="mt-1 w-full p-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="••••••••"
+              className="input input-bordered"
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition"
-            onClick={() => Login()}
-          >
-            Se connecter
-          </button>
-        </div>
-        <p className="mt-4 text-sm text-center text-gray-600">
-          Pas encore de compte ?{" "}
-          <a href="#" className="text-blue-600 hover:underline">
-            Créez-en un
-          </a>
-        </p>
+
+          <div className="form-control mt-4">
+            <button type="submit" className="btn btn-primary">
+              Se connecter
+            </button>
+          </div>
+
+          <div className="text-center mt-4">
+            <p className="text-sm">
+              Pas encore de compte ?{" "}
+              <a href="#" className="link link-primary">
+                Créez-en un
+              </a>
+            </p>
+          </div>
+        </form>
       </div>
+
+      {alert && (
+        <AlertMessage
+          type={alert.type}
+          message={alert.message}
+          duration={3000}
+          onClose={() => setAlert(null)}
+        />
+      )}
     </div>
   );
 }

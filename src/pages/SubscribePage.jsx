@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AlertMessage from "../components/AlertMessage";
 
 export default function SubscribePage() {
   const [email, setEmail] = useState("");
@@ -23,60 +24,84 @@ export default function SubscribePage() {
       });
   };
 
+  const [alert, setAlert] = useState(null);
+
+  const showAlert = (type) => {
+    const message =
+      type === "success"
+        ? "Succès ! Tout s'est bien passé."
+        : "Échec ! Une erreur est survenue.";
+    setAlert({ type, message });
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Créer un compte
-        </h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
+    <div className="min-h-screen flex items-center justify-center bg-base-200">
+      <div className="card w-full max-w-sm shadow-xl bg-base-100">
+        <form
+          className="card-body"
+          onSubmit={(e) => {
+            e.preventDefault();
+            Subcribing();
+          }}
+        >
+          <h2 className="text-2xl font-bold text-center mb-4">
+            Créer un compte
+          </h2>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Email</span>
             </label>
             <input
               type="email"
-              className="mt-1 w-full p-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="exemple@email.com"
+              className="input input-bordered"
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Nom d’utilisateur
+
+          <div className="form-control">
+            <label className="label" htmlFor="username">
+              <span className="label-text">Nom d’utilisateur</span>
             </label>
             <input
+              id="username"
               type="text"
-              className="mt-1 w-full p-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="votre nom d’utilisateur"
+              className="input input-bordered"
               onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Mot de passe
+
+          <div className="form-control">
+            <label className="label" htmlFor="password">
+              <span className="label-text">Mot de passe</span>
             </label>
             <input
+              id="password"
               type="password"
-              className="mt-1 w-full p-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="********"
+              className="input input-bordered"
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded-xl hover:bg-green-700 transition"
-            onClick={() => Subcribing()}
-          >
-            S'inscrire
-          </button>
-        </div>
-        <p className="mt-4 text-sm text-center text-gray-600">
-          Vous avez déjà un compte ?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
-            Connectez-vous
-          </a>
-        </p>
+
+          <div className="form-control mt-6">
+            <button type="submit" className="btn btn-primary">
+              S'inscrire
+            </button>
+          </div>
+
+          <p className="text-sm text-center text-gray-500 mt-4">
+            Vous avez déjà un compte ?{" "}
+            <a href="/login" className="link link-primary">
+              Connectez-vous
+            </a>
+          </p>
+        </form>
       </div>
     </div>
   );
