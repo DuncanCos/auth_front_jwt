@@ -14,7 +14,7 @@ export default function SubscribePage() {
     console.log(password);
 
     axios
-      .post("http://127.0.0.1:8080/subscribe", {
+      .post("http://127.0.0.1:8080/auth/subscribe", {
         mail: email,
         username: username,
         password: password,
@@ -33,6 +33,20 @@ export default function SubscribePage() {
         : "Échec ! Une erreur est survenue.";
     setAlert({ type, message });
   };
+
+  const criteria = [
+    { label: "Au moins 8 caractères", test: (pw) => pw.length >= 8 },
+    { label: "Une minuscule", test: (pw) => /[a-z]/.test(pw) },
+    { label: "Une majuscule", test: (pw) => /[A-Z]/.test(pw) },
+    { label: "Un chiffre", test: (pw) => /\d/.test(pw) },
+    {
+      label: "Un caractère spécial",
+      test: (pw) => /[!@#$%^&*(),.?":{}|<>]/.test(pw),
+    },
+  ];
+
+  const isSecure = criteria.every((c) => c.test(password));
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
@@ -88,6 +102,34 @@ export default function SubscribePage() {
               required
             />
           </div>
+
+          <ul className="mt-4 space-y-1">
+          {criteria.map((c, index) => (
+            <li key={index} className={`text-sm flex items-center`}>
+              <span
+                className={`mr-2 badge ${
+                  c.test(password) ? "badge-success" : "badge-error"
+                }`}
+              >
+                {c.test(password) ? "✔" : "✘"}
+              </span>
+              {c.label}
+            </li>
+          ))}
+        </ul>
+
+        <div
+          className={`mt-4 alert ${
+            isSecure ? "alert-success" : "alert-error"
+          }`}
+        >
+          {isSecure ? (
+            <span>Mot de passe sécurisé ✅</span>
+          ) : (
+            <span>Mot de passe non sécurisé ❌</span>
+          )}
+        </div>
+      
 
           <div className="form-control mt-6">
             <button type="submit" className="btn btn-primary">

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import UserModalSessionDelete from "../components/UserModalSessionDelete";
+
 
 export default function UserModalSession({
   show,
   onClose,
   userId,
   onEdit,
-  onDelete,
 }) {
+    const [showDeleteSessionModal, setShowDeleteSessionModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(0);
   useEffect(() => {
     if (userId != 0) {
       getUserSessions();
@@ -94,7 +97,10 @@ export default function UserModalSession({
                       </button>
                       <button
                         className="btn btn-sm btn-error"
-                        onClick={() => onDelete(session.id)}
+                        onClick={() => {
+                          setShowDeleteSessionModal(true);
+                          setSelectedId(session.id);
+                        }}
                       >
                         Supprimer
                       </button>
@@ -112,6 +118,12 @@ export default function UserModalSession({
           </button>
         </div>
       </div>
+
+      <UserModalSessionDelete
+        show={showDeleteSessionModal}
+        onClose={() => setShowDeleteSessionModal(false)}
+        userId={selectedId}
+      />
     </div>
   );
 }

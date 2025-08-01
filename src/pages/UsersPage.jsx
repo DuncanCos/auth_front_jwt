@@ -5,6 +5,7 @@ import MustBeLoggedIn from "./MustBeLoggedIn";
 import UserModalSession from "../components/UserModalSession";
 import UserModalModif from "../components/UserModalModif";
 import UserModalDelete from "../components/UserModalDelete";
+import UserModalSessionDelete from "../components/UserModalSessionDelete";
 
 export default function UserPage() {
   const [users, setUsers] = useState([]);
@@ -12,6 +13,7 @@ export default function UserPage() {
   const [showSessionModal, setShowSessionModal] = useState(false);
   const [showModifModal, setShowModifModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteSessionModal, setShowDeleteSessionModal] = useState(false);
 
   const { user, loading, fetchUser } = useAuth();
 
@@ -24,15 +26,22 @@ export default function UserPage() {
     created_at: "2025-04-16T13:03:12.379612",
   });
 
+  const [refresh, setRefresh] = useState(false);
+
   useEffect(() => {
     const loadUser = () => {
       fetchUser();
-      getingUsers();
+      
+        console.log("fetching users");
+        getingUsers();
+      
+      
+     
       console.log("Utilisateur après chargement :", user);
     };
 
     loadUser();
-  }, []);
+  }, [user, refresh]);
 
   const getingUsers = () => {
     axios
@@ -43,9 +52,9 @@ export default function UserPage() {
       })
       .catch((err) => {
         console.log(err.response.data);
-        if (err.response.data == "relog needed") {
+        if (err.response.data == "refresh needed") {
           axios
-            .get("http://127.0.0.1:8080/refresh", { withCredentials: true })
+            .get("http://127.0.0.1:8080/auth/refresh", { withCredentials: true })
             .then((resp) => {
               console.log(resp);
               if (resp.data == "token refreshed") {
@@ -62,7 +71,10 @@ export default function UserPage() {
                     console.log(error);
                   });
               }
-            });
+            }).catch((error) => {
+              
+              console.log("Erreur lors du rafraîchissement du token :", error);
+          });
         }
       });
   };
@@ -145,7 +157,11 @@ export default function UserPage() {
         show={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         userId={selectedId}
+        refresher={() => setRefresh(!refresh)}
       />
+
+     
+
     </div>
   );
 }

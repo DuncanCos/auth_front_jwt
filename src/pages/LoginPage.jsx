@@ -13,7 +13,7 @@ export default function LoginPage() {
 
     axios
       .post(
-        "http://127.0.0.1:8080/login",
+        "http://127.0.0.1:8080/auth/login",
         {
           mail: email,
           password: password,

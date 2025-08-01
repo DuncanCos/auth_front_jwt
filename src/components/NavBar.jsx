@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
@@ -8,7 +8,11 @@ import { useAuth } from "../contextes/AuthProvider";
 
 export default function NavBar() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user,disconnectUser } = useAuth();
+
+  useEffect(() => {
+  }, [user]);
+
   const disconnecting = () => {
     axios
       .get("http://127.0.0.1:8080/logout", { withCredentials: true })
@@ -72,7 +76,7 @@ export default function NavBar() {
           </Link>
           <div
             onClick={() => {
-              disconnecting();
+              disconnectUser();
             }}
             className="text-gray-700 hover:text-blue-600 font-medium transition duration-200"
           >

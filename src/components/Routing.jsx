@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import SubscribePage from "../pages/SubscribePage";
 import UserPage from "../pages/UsersPage";
+import AuthPage from "../pages/AuthPage";
 
 // import { Navigate } from "react-router-dom";
 // import { useAuth } from "../contextes/AuthProvider";
@@ -39,6 +40,13 @@ export default function Routing() {
         ></Route>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/subscribe" element={<SubscribePage />}></Route>
+        
+        <Route
+          path="/auth/:id"
+          element={
+            <AuthPage />
+          }
+        ></Route>
       </Routes>
     </>
   );
