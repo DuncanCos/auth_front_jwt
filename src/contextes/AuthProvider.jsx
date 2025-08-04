@@ -62,10 +62,13 @@ export const AuthProvider = ({ children }) => {
               })
           }
 
-          if (err.response.data == "relog needed" || err.response.data == "no cookie") {
+          if (err.response.data == "relog needed"  ) {
             setUser(null);
             setLoading(false);
             navigate("/login");
+          }else if (err.response.data == "no cookie"){
+            setUser(null);
+            setLoading(false);
           }
         });
     
