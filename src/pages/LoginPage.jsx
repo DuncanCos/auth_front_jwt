@@ -2,32 +2,28 @@ import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AlertMessage from "../components/AlertMessage";
+import { useAuth } from "../contextes/AuthProvider";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+   const { user, loading, logUser } = useAuth();
 
   const Login = () => {
     console.log(email);
     console.log(password);
 
-    axios
-      .post(
-        "http://127.0.0.1:8080/auth/login",
-        {
-          mail: email,
-          password: password,
-        },
-        { withCredentials: true },
-      )
-      .then((responce) => {
-        console.log(responce);
-        showAlert("success");
-      })
-      .catch((err) => {
-        console.log(err);
-        showAlert("error");
-      });
+    logUser(password,email)
+    .then((test)=>{
+      console.log("test commexion")
+      setEmail("")
+      setPassword("")
+      showAlert('success')
+    }).catch((error)=>{
+      showAlert('echec')
+    });
+
+   
   };
 
   const [alert, setAlert] = useState(null);
@@ -60,6 +56,7 @@ export default function LoginPage() {
               type="email"
               placeholder="exemple@email.com"
               className="input input-bordered"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
@@ -73,6 +70,7 @@ export default function LoginPage() {
               type="password"
               placeholder="••••••••"
               className="input input-bordered"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />

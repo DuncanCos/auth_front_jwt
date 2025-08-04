@@ -3,7 +3,7 @@ import axios from "axios";
 import React,{useState} from "react";
 import AlertMessage from "./AlertMessage";
 
-const UserModalSessionDelete = ({ show, onClose, userId }) => {
+const UserModalSessionDelete = ({ show, onClose, userId, refresher }) => {
 
 
    const [alert, setAlert] = useState(null);
@@ -25,6 +25,7 @@ const UserModalSessionDelete = ({ show, onClose, userId }) => {
     axios.delete(`http://127.0.0.1:8080/sessions/user/${userId}`,{ withCredentials: true,}).then((response) => {
       console.log("Session deleted successfully:", response);
       showAlert("success");
+      refresher()
   }).catch((error) => {
       console.error("Error deleting session:", error);
       showAlert("error");

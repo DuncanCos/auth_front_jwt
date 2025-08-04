@@ -1,9 +1,11 @@
 // src/components/MyModal.jsx
 import React from "react";
 
-const UserModalModif = ({ show, onClose, user }) => {
-  if (!show) return null;
+const UserModalModif = ({ show, onClose, user, refresher }) => {
 
+
+  
+  if (!show) return null;
   return (
     <div className="modal modal-open">
       <div className="modal-box w-11/12 max-w-4xl">
@@ -86,11 +88,12 @@ const UserModalModif = ({ show, onClose, user }) => {
             <tr>
               <td className="font-semibold">Rôle</td>
               <td>
-                <input
-                  type="text"
-                  defaultValue={user.role}
-                  className="input input-bordered w-full"
-                />
+               
+
+                <select className="select" value={user.roles}>
+                  <option value="user">user</option>
+                  <option value="admin">admin</option>
+                </select>
               </td>
             </tr>
           </tbody>

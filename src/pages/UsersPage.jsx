@@ -29,19 +29,15 @@ export default function UserPage() {
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    const loadUser = () => {
-      fetchUser();
-      
-        console.log("fetching users");
-        getingUsers();
-      
-      
-     
-      console.log("Utilisateur après chargement :", user);
-    };
+    if(loading){
+      loadUser();
+    }
+   
+  }, [refresh,loading]);
 
-    loadUser();
-  }, [user, refresh]);
+  const loadUser = () => {
+    getingUsers();
+  };
 
   const getingUsers = () => {
     axios
@@ -52,36 +48,14 @@ export default function UserPage() {
       })
       .catch((err) => {
         console.log(err.response.data);
-        if (err.response.data == "refresh needed") {
-          axios
-            .get("http://127.0.0.1:8080/auth/refresh", { withCredentials: true })
-            .then((resp) => {
-              console.log(resp);
-              if (resp.data == "token refreshed") {
-                axios
-                  .get("http://127.0.0.1:8080/users/users", {
-                    withCredentials: true,
-                  })
-                  .then((responce) => {
-                    console.log(responce);
-                    setUsers(responce.data);
-                  })
-                  .catch((error) => {
-                    console.log("eeror");
-                    console.log(error);
-                  });
-              }
-            }).catch((error) => {
-              
-              console.log("Erreur lors du rafraîchissement du token :", error);
-          });
+        if (!user) {
+          return <MustBeLoggedIn />;
         }
       });
   };
 
-  if (!user) {
-    return <MustBeLoggedIn />;
-  }
+  if(loading===true) return "chargement en cours"
+  
 
   return (
     <div className="overflow-x-auto">
@@ -147,11 +121,13 @@ export default function UserPage() {
         show={showSessionModal}
         onClose={() => setShowSessionModal(false)}
         userId={selectedId}
+       
       />
       <UserModalModif
         show={showModifModal}
         onClose={() => setShowModifModal(false)}
         user={selectedUser}
+        refresher={() => setRefresh(!refresh)}
       />
       <UserModalDelete
         show={showDeleteModal}
@@ -159,9 +135,6 @@ export default function UserPage() {
         userId={selectedId}
         refresher={() => setRefresh(!refresh)}
       />
-
-     
-
     </div>
   );
 }

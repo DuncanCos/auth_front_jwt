@@ -8,14 +8,16 @@ export default function UserModalSession({
   onClose,
   userId,
   onEdit,
+  
 }) {
     const [showDeleteSessionModal, setShowDeleteSessionModal] = useState(false);
   const [selectedId, setSelectedId] = useState(0);
+  const [refresh, setRefresh] = useState(false);
   useEffect(() => {
     if (userId != 0) {
       getUserSessions();
     }
-  }, [userId]);
+  }, [userId, refresh]);
 
   const getUserSessions = () => {
     axios
@@ -90,13 +92,13 @@ export default function UserModalSession({
                   <td>
                     <div className="flex gap-2">
                       <button
-                        className="btn btn-sm btn-info"
+                        className="btn btn-primary"
                         onClick={() => onEdit(session.id)}
                       >
                         Éditer
                       </button>
                       <button
-                        className="btn btn-sm btn-error"
+                        className="btn  btn-error"
                         onClick={() => {
                           setShowDeleteSessionModal(true);
                           setSelectedId(session.id);
@@ -123,6 +125,7 @@ export default function UserModalSession({
         show={showDeleteSessionModal}
         onClose={() => setShowDeleteSessionModal(false)}
         userId={selectedId}
+        refresher={() => setRefresh(!refresh)}
       />
     </div>
   );
