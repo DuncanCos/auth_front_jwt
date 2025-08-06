@@ -42,21 +42,7 @@ export default function AuthPage() {
     <div className="min-h-screen flex items-center justify-center bg-base-200">
   <div className="w-full max-w-md p-8 space-y-4 bg-base-100 rounded-box shadow-md">
     <h1 className="text-2xl font-bold text-center">Finalisation de creation de compte</h1>
-    <form className="space-y-4">
-
-      <div>
-        <label className="label">
-          <span className="label-text">Nom d'utilisateur</span>
-        </label>
-        <p className="text-xl font-semibold">JeanDupont</p>
-      </div>
-
-      <div>
-        <label className="label">
-          <span className="label-text">Rang</span>
-        </label>
-        <p className="text-xl font-semibold">Administrateur</p>
-      </div>
+    <div className="space-y-4">
 
       <div className="form-control">
         <label className="label">
@@ -81,11 +67,11 @@ export default function AuthPage() {
       </div>
 
       <div className="form-control mt-6">
-        <button type="submit" className="btn btn-primary">
+        <button onClick={handleSubmit}  className="btn btn-primary">
           verifier et finaliser
         </button>
       </div>
-    </form>
+    </div>
   </div>
 </div>
 
