@@ -5,23 +5,26 @@ import AlertMessage from "../components/AlertMessage";
 
 export default function SubscribePage() {
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const Subcribing = () => {
     console.log(email);
-    console.log(username);
     console.log(password);
 
-    axios
+    if(isSecure){
+      axios
       .post("http://127.0.0.1:8080/auth/subscribe", {
         mail: email,
-        username: username,
         password: password,
       })
       .then((responce) => {
         console.log(responce);
       });
+    }else{
+      alert("password not secure")
+    }
+
+    
   };
 
   const [alert, setAlert] = useState(null);
@@ -51,12 +54,8 @@ export default function SubscribePage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="card w-full max-w-sm shadow-xl bg-base-100">
-        <form
+        <div
           className="card-body"
-          onSubmit={(e) => {
-            e.preventDefault();
-            Subcribing();
-          }}
         >
           <h2 className="text-2xl font-bold text-center mb-4">
             Créer un compte
@@ -75,19 +74,6 @@ export default function SubscribePage() {
             />
           </div>
 
-          <div className="form-control">
-            <label className="label" htmlFor="username">
-              <span className="label-text">Nom d’utilisateur</span>
-            </label>
-            <input
-              id="username"
-              type="text"
-              placeholder="votre nom d’utilisateur"
-              className="input input-bordered"
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
 
           <div className="form-control">
             <label className="label" htmlFor="password">
@@ -132,18 +118,18 @@ export default function SubscribePage() {
       
 
           <div className="form-control mt-6">
-            <button type="submit" className="btn btn-primary">
+            <button onClick={Subcribing} className="btn btn-primary">
               S'inscrire
             </button>
           </div>
 
           <p className="text-sm text-center text-gray-500 mt-4">
-            Vous avez déjà un compte ?{" "}
+            Vous avez déjà un compte ?
             <a href="/login" className="link link-primary">
               Connectez-vous
             </a>
           </p>
-        </form>
+        </div>
       </div>
     </div>
   );
