@@ -5,26 +5,16 @@ import AlertMessage from "../components/AlertMessage";
 
 export default function SubscribePage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   const Subcribing = () => {
     console.log(email);
-    console.log(password);
-
-    if(isSecure){
-      axios
+    axios
       .post("http://127.0.0.1:8080/auth/subscribe", {
         mail: email,
-        password: password,
       })
       .then((responce) => {
         console.log(responce);
       });
-    }else{
-      alert("password not secure")
-    }
-
-    
   };
 
   const [alert, setAlert] = useState(null);
@@ -37,26 +27,10 @@ export default function SubscribePage() {
     setAlert({ type, message });
   };
 
-  const criteria = [
-    { label: "Au moins 8 caractères", test: (pw) => pw.length >= 8 },
-    { label: "Une minuscule", test: (pw) => /[a-z]/.test(pw) },
-    { label: "Une majuscule", test: (pw) => /[A-Z]/.test(pw) },
-    { label: "Un chiffre", test: (pw) => /\d/.test(pw) },
-    {
-      label: "Un caractère spécial",
-      test: (pw) => /[!@#$%^&*(),.?":{}|<>]/.test(pw),
-    },
-  ];
-
-  const isSecure = criteria.every((c) => c.test(password));
-
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="card w-full max-w-sm shadow-xl bg-base-100">
-        <div
-          className="card-body"
-        >
+        <div className="card-body">
           <h2 className="text-2xl font-bold text-center mb-4">
             Créer un compte
           </h2>
@@ -73,49 +47,6 @@ export default function SubscribePage() {
               required
             />
           </div>
-
-
-          <div className="form-control">
-            <label className="label" htmlFor="password">
-              <span className="label-text">Mot de passe</span>
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="********"
-              className="input input-bordered"
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <ul className="mt-4 space-y-1">
-          {criteria.map((c, index) => (
-            <li key={index} className={`text-sm flex items-center`}>
-              <span
-                className={`mr-2 badge ${
-                  c.test(password) ? "badge-success" : "badge-error"
-                }`}
-              >
-                {c.test(password) ? "✔" : "✘"}
-              </span>
-              {c.label}
-            </li>
-          ))}
-        </ul>
-
-        <div
-          className={`mt-4 alert ${
-            isSecure ? "alert-success" : "alert-error"
-          }`}
-        >
-          {isSecure ? (
-            <span>Mot de passe sécurisé ✅</span>
-          ) : (
-            <span>Mot de passe non sécurisé ❌</span>
-          )}
-        </div>
-      
 
           <div className="form-control mt-6">
             <button onClick={Subcribing} className="btn btn-primary">

@@ -1,10 +1,8 @@
 // src/components/MyModal.jsx
-import React from "react";
+import React, { useState } from "react";
 
 const UserModalModif = ({ show, onClose, user, refresher }) => {
-
-
-  
+  const [newRoles, setNewRoles] = useState(user.roles || "user");
   if (!show) return null;
   return (
     <div className="modal modal-open">
@@ -38,16 +36,6 @@ const UserModalModif = ({ show, onClose, user, refresher }) => {
                   defaultValue={user.mail}
                   readOnly
                   disabled
-                  className="input input-bordered w-full"
-                />
-              </td>
-            </tr>
-            <tr>
-              <td className="font-semibold">Nom d'utilisateur</td>
-              <td>
-                <input
-                  type="text"
-                  defaultValue={user.username}
                   className="input input-bordered w-full"
                 />
               </td>
@@ -88,9 +76,13 @@ const UserModalModif = ({ show, onClose, user, refresher }) => {
             <tr>
               <td className="font-semibold">Rôle</td>
               <td>
-               
-
-                <select className="select" value={user.roles}>
+                <select
+                  className="select"
+                  value={newRoles}
+                  onChange={(e) => {
+                    setNewRoles(e.target.value);
+                  }}
+                >
                   <option value="user">user</option>
                   <option value="admin">admin</option>
                 </select>
@@ -99,7 +91,12 @@ const UserModalModif = ({ show, onClose, user, refresher }) => {
           </tbody>
         </table>
         <div className="modal-action">
-          <button className="btn btn-primary">Enregistrer</button>
+          {newRoles != user.roles ? (
+            <button className="btn btn-primary">Enregistrer</button>
+          ) : (
+            ""
+          )}
+
           <button className="btn" onClick={onClose}>
             Fermer
           </button>

@@ -29,11 +29,10 @@ export default function UserPage() {
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    if(loading){
+    if (loading) {
       loadUser();
     }
-   
-  }, [refresh,loading]);
+  }, [refresh, loading]);
 
   const loadUser = () => {
     getingUsers();
@@ -48,14 +47,17 @@ export default function UserPage() {
       })
       .catch((err) => {
         console.log(err.response.data);
+        if (err.response.data == "refresh needed") {
+          setRefresh(!refresh);
+        }
+
         if (!user) {
           return <MustBeLoggedIn />;
         }
       });
   };
 
-  if(loading===true) return "chargement en cours"
-  
+  if (loading === true) return "chargement en cours";
 
   return (
     <div className="overflow-x-auto">
@@ -63,7 +65,7 @@ export default function UserPage() {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nom d'utilisateur</th>
+            <th>roles</th>
             <th>Email</th>
             <th>Date de création</th>
             <th>Actions</th>
@@ -73,7 +75,7 @@ export default function UserPage() {
           {users.map((user) => (
             <tr key={user.id}>
               <td>{user.id}</td>
-              <td>{user.username}</td>
+              <td>{user.roles}</td>
               <td>{user.mail}</td>
               <td>
                 {new Date(user.created_at).toLocaleString("fr-FR", {
@@ -121,7 +123,6 @@ export default function UserPage() {
         show={showSessionModal}
         onClose={() => setShowSessionModal(false)}
         userId={selectedId}
-       
       />
       <UserModalModif
         show={showModifModal}
