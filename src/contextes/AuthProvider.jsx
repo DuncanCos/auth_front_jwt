@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import api from "../components/api";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 const AuthContext = createContext();
@@ -12,9 +13,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // setLoading(true);
-    // console.log("utilisation du useverif",user)
+    console.log("utilisation du useverif",user)
     //useVerif();
     fetchUser();
+
+    console.log('location ',location.pathname)
   }, [location]);
 
   const fetchUser = async () => {
@@ -22,8 +25,8 @@ export const AuthProvider = ({ children }) => {
     // console.log("Tentative de récupération des données...");
     // console.log('fetchuser start')
 
-    axios
-      .get("http://127.0.0.1:8080/auth/me", { withCredentials: true })
+    api
+      .get("/auth/me", {withCredentials:true})
       .then((res) => {
         console.log("Réponse reçue:", res.data);
         setUser(res.data);
@@ -34,8 +37,8 @@ export const AuthProvider = ({ children }) => {
 
         if (err.response.data == "refresh needed") {
           // axios pour rafraîchir le token
-          axios
-            .get("http://127.0.0.1:8080/auth/refresh", {
+          api
+            .get("/auth/refresh", {
               withCredentials: true,
             })
             .then((resp) => {
@@ -48,7 +51,11 @@ export const AuthProvider = ({ children }) => {
               console.log(error);
               setUser(null);
               setLoading(false);
-              navigate("/login");
+              if(!location.pathname.includes("/login")){
+            //console.log('returning to login page')
+             navigate("/login");
+
+          }
             });
         }
 
@@ -59,6 +66,11 @@ export const AuthProvider = ({ children }) => {
         } else if (err.response.data == "no cookie") {
           setUser(null);
           setLoading(false);
+          if(!location.pathname.includes("/login")){
+            //console.log('returning to login page')
+             navigate("/login");
+
+          }
         }
       });
   };
@@ -67,8 +79,8 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     console.log("Tentative de récupération des données...");
 
-    axios
-      .get("http://127.0.0.1:8080/auth/logout", { withCredentials: true })
+    api
+      .get("/auth/logout", { withCredentials: true })
       .then((responce) => {
         console.log(responce);
         setUser(null);
@@ -89,9 +101,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logUser = (password, email) => {
-    return axios
+    console.log("logusers")
+    console.log(password,email)
+    return api
       .post(
-        "http://127.0.0.1:8080/auth/login",
+        "/auth/login",
         {
           mail: email,
           password: password,

@@ -1,106 +1,88 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import axios from "axios";
-import AlertMessage from "../components/AlertMessage";
-import { useAuth } from "../contextes/AuthProvider";
 
-export default function LoginPage() {
+
+
+import { useNavigate } from "react-router-dom";
+
+import { useAuth } from "../../contextes/AuthProvider";
+
+export default function LoginPages() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-   const { user, loading, logUser } = useAuth();
+  const { user, loading, logUser } = useAuth();
+  const navigate = useNavigate();
 
-  const Login = () => {
-    console.log(email);
+
+  const Loginin = () => {
+    console.log("email of login");
+    console.log("mail", email);
     console.log(password);
 
-    logUser(password,email)
-    .then((test)=>{
-      console.log("test commexion")
-      setEmail("")
-      setPassword("")
-      showAlert('success')
-    }).catch((error)=>{
-      showAlert('echec')
-    });
-
-   
+    logUser(password, email)
+      .then((test) => {
+        console.log("test commexion");
+        setEmail("");
+        setPassword("");
+       
+        navigate("/");
+      })
+      .catch((error) => {
+        
+      });
   };
 
-  const [alert, setAlert] = useState(null);
-
-  const showAlert = (type) => {
-    const message =
-      type === "success"
-        ? "Succès ! Tout s'est bien passé."
-        : "Échec ! Une erreur est survenue.";
-    setAlert({ type, message });
-  };
+  if (user) {
+    navigate("/");
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200">
-      <div className="card w-full max-w-sm shadow-xl bg-base-100">
-        <form
-          className="card-body"
-          onSubmit={(e) => {
-            e.preventDefault();
-            Login();
-          }}
-        >
-          <h2 className="text-2xl font-bold text-center mb-2">Connexion</h2>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="max-w-md w-full card shadow-lg p-8">
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          EZPlay Connexion
+        </h2>
 
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Email</span>
-            </label>
+        <form className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">eMail</label>
             <input
               type="email"
-              placeholder="exemple@email.com"
-              className="input input-bordered"
+              placeholder="your@email.com"
+              className="input input-bordered w-full"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
           </div>
 
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Mot de passe</span>
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Mot de passe
             </label>
             <input
               type="password"
               placeholder="••••••••"
-              className="input input-bordered"
+              className="input input-bordered w-full"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
             />
           </div>
 
-          <div className="form-control mt-4">
-            <button type="submit" className="btn btn-primary">
-              Se connecter
-            </button>
+          <div className="flex items-center justify-between">
+            {/* <a href="#" className="text-sm link">J'ai oublié mon mot de passe</a> */}
           </div>
 
-          <div className="text-center mt-4">
-            <p className="text-sm">
-              Pas encore de compte ?{" "}
-              <a href="#" className="link link-primary">
-                Créez-en un
-              </a>
-            </p>
-          </div>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              Loginin();
+            }}
+            className="btn btn-primary w-full"
+          >
+            Connexion
+          </button>
         </form>
       </div>
-
-      {alert && (
-        <AlertMessage
-          type={alert.type}
-          message={alert.message}
-          duration={3000}
-          onClose={() => setAlert(null)}
-        />
-      )}
     </div>
   );
 }

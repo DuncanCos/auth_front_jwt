@@ -1,12 +1,16 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import api from "../../components/api";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function AuthPage() {
-  const { id } = useParams();
+  const { id, mode } = useParams();
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [titre, setTitre] = useState("Finalisation de creation de compte");
+  const [confirmTitre, setConfirmTitre] = useState("Compte créé avec succès");
+
+  let navigate = useNavigate();
 
   const handleSubmit = () => {
     if (password !== confirmPassword) {
@@ -14,18 +18,14 @@ export default function AuthPage() {
       return;
     }
 
-    // Ici, vous pouvez ajouter la logique pour finaliser la création du compte
-    console.log("ID:", id);
-    console.log("Nouveau mot de passe:", password);
-
     // Exemple d'appel API pour finaliser la création du compte
-    axios
-      .post(`http://localhost:8080/auth/finalize/${id}`, {
+    api
+      .post(`/auth/finalize/${id}`, {
         password: password,
       })
       .then((response) => {
         console.log("Compte créé avec succès :", response.data);
-        alert("Compte créé avec succès !");
+        alert(confirmTitre);
       })
       .catch((error) => {
         console.error("Erreur lors de la création du compte :", error);
@@ -44,14 +44,25 @@ export default function AuthPage() {
     },
   ];
 
+  useEffect(() => {
+    if (mode == "create") {
+      setTitre("Finalisation de creation de compte");
+      setConfirmTitre("Compte créé avec succès");
+    } else if (mode == "new") {
+      setTitre("Compte créé avec succès");
+      setConfirmTitre("Mot de passe changer avec succes");
+    } else if (mode == "forgot") {
+      setTitre("Reinitialisation de Mot De Passe");
+      setConfirmTitre("Mot de passe Reinitialiser avec succes");
+    }
+  }, []);
+
   const isSecure = criteria.every((c) => c.test(password));
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="w-full max-w-xl p-8 space-y-4 bg-base-100 rounded-box shadow-md">
-        <h1 className="text-2xl font-bold text-center">
-          Finalisation de creation de compte
-        </h1>
+        <h1 className="text-2xl font-bold text-center">{titre}</h1>
         <div className="space-y-4">
           <div className="flex gap-4">
             <div>
@@ -105,7 +116,7 @@ export default function AuthPage() {
               confirmPassword != "" &&
               password != confirmPassword
                 ? "it must be the same password"
-                : "✔"}
+                : ""}
             </div>
             <div className=" min-w-3xs card bg-base-200">
               <ul className="m-4 space-y-1">
@@ -125,11 +136,15 @@ export default function AuthPage() {
             </div>
           </div>
 
-          <div className="form-control mt-6">
-            <button onClick={handleSubmit} className="btn btn-primary">
-              verifier et finaliser
-            </button>
-          </div>
+          {isSecure && confirmPassword == password ? (
+            <div className="form-control mt-6">
+              <button onClick={handleSubmit} className="btn btn-primary">
+                verifier et finaliser
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>
